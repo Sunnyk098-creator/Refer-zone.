@@ -4,7 +4,7 @@ import { getDatabase, ref, get, set, update, runTransaction } from 'firebase/dat
 import axios from 'axios';
 
 // --- CONFIGURATION ---
-const BOT_TOKEN = '8643395116:AAGpTA74QTPUXyRmHCAjpH5vOFZ9luz-27E'; // Token
+const BOT_TOKEN = '8698471410:AAGRd7bnbaa8RL01Bh4zehGSQRQ7SWvCLX8'; // Token
 const ADMIN_ID = 8522410574; // Master Admin
 
 const BOT_NAME = "Black tree🌴🤑"; 
