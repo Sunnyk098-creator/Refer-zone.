@@ -681,7 +681,7 @@ bot.on('callback_query', async (query) => {
     const data = query.data;
     const firstName = query.from.first_name || 'User';
 
-    if (data !== 'verify_join' && data !== 'show_user_leaderboard') {
+    if (data !== 'verify_join' && data !== 'show_user_leaderboard' && data !== 'check_verification') {
         bot.answerCallbackQuery(query.id).catch(()=>{});
     }
 
@@ -920,6 +920,13 @@ bot.on('callback_query', async (query) => {
             }
         }
 
+        // Pop-up show karne ke liye /UserId true ya false
+        const isVerifiedStatus = (userData.verified === true || userData.verified === "true");
+        bot.answerCallbackQuery(query.id, { 
+            text: `/${userId} : ${isVerifiedStatus ? 'true' : 'false'}`, 
+            show_alert: true 
+        }).catch(()=>{});
+
         // UPDATED FAILED RECORD BLOCK HERE
         if (hasFailedRecord || userData.verified === 'failed') {
             if (userData.verified !== 'failed' || userData.rewardGiven !== 'failed') {
@@ -928,7 +935,7 @@ bot.on('callback_query', async (query) => {
             return bot.sendMessage(chatId, `🏡 Welcome To ${BOT_NAME}!\n\n👀 Same Device Detected By System!\n\nStill You Can Refer & Earn 🥳`, USER_MENU);
         }
 
-        if (userData.verified === true || userData.verified === "true") {
+        if (isVerifiedStatus) {
             bot.sendMessage(chatId, `🏡 Welcome To ${BOT_NAME}!\n\n🎉 You Can Earn Money From Reffering This Bot To Friend's`, USER_MENU);
             
             // --- FIX APPLIED HERE: Using Firebase runTransaction for 100% accuracy ---
@@ -953,22 +960,22 @@ bot.on('callback_query', async (query) => {
                 bot.sendMessage(inviterId, `[${userId}](tg://user?id=${userId}) Got Invited By Your Url: +${refAmt} Rs`, { parse_mode: 'Markdown' }).catch(()=>{});
             }
         } else {
-            bot.sendMessage(chatId, "⏳ Your verification is still pending. Please click 'Open App' to complete it first.");
+            bot.sendMessage(chatId, "⏳ Your verification is still pending. Please click 'Verify' to complete it first.");
         }
     }
 });
 
-// --- HELPER FUNCTION (UPDATED URL) ---
+// --- HELPER FUNCTION (UPDATED) ---
 function promptDeviceVerification(chatId, userId, firstName) {
     const safeName = encodeURIComponent(firstName || 'User');
     const miniAppUrl = `https://device-verification-dun.vercel.app?id=${userId}&name=${safeName}`;
     
-    bot.sendMessage(chatId, "📱 *Device Verification Required*\n\nTo ensure fair usage, please verify your device by clicking 'Open App'. After 3 seconds, close it and click 'Check Verification'.", {
+    bot.sendMessage(chatId, "🔐 *Verify your self*", {
         parse_mode: 'Markdown',
         reply_markup: {
             inline_keyboard: [
-                [{ text: "🔗 Open App", web_app: { url: miniAppUrl } }],
-                [{ text: "✅ Check Verification", callback_data: "check_verification" }]
+                [{ text: "✅ Verify", web_app: { url: miniAppUrl } }],
+                [{ text: "🔄 Check Verification", callback_data: "check_verification" }]
             ]
         }
     });
